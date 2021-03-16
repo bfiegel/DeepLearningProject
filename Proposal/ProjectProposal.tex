@@ -12,46 +12,33 @@
 \usepackage{microtype}      % microtypography
 \usepackage{lipsum}
 
-\title{A template for the \emph{arxiv} style}
+\title{Deep Learning Project: GAN Artwork}
 
 
 \author{
-	David S.~Hippocampus\thanks{Use footnote for providing further
-		information about author (webpage, alternative
-		address)---\emph{not} for acknowledging funding agencies.} \\
-	Department of Computer Science\\
-	Cranberry-Lemon University\\
-	Pittsburgh, PA 15213 \\
-	\texttt{hippo@cs.cranberry-lemon.edu} \\
+	Kevin Steele \\
+	Department of Electrical Engineering \\
+	University of Iowa\\
+	\texttt{kevin-steele@uiowa.edu} \\
 	%% examples of more authors
 	\And
-	Elias D.~Striatum \\
-	Department of Electrical Engineering\\
-	Mount-Sheikh University\\
-	Santa Narimana, Levand \\
-	\texttt{stariate@ee.mount-sheikh.edu} \\
-	%% \AND
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
-	%% \And
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
-	%% \And
-	%% Coauthor \\
-	%% Affiliation \\
-	%% Address \\
-	%% \texttt{email} \\
+	Brain Fiegel \\
+	Department of Electrical Engineering \\
+	University of Iowa\\
+	\texttt{brian-fiegel@uiowa.edu} \\
+	\And
+	Stjepan Fiolic \\
+	Department of Electrical Engineering \\
+	University of Iowa\\
+	\texttt{stjepan-fiolic@uiowa.edu} \\
 }
 
 \begin{document}
 	\maketitle
 	
 	\begin{abstract}
-		\lipsum[1]
+		https://www.overleaf.com/latex/templates/style-and-template-for-preprints-arxiv-bio-arxiv/fxsnsrzpnvwc
+
 	\end{abstract}
 	
 	
@@ -60,28 +47,30 @@
 	
 	
 	\section{Introduction}
-	\lipsum[2]
-	\lipsum[3]
+	\begin{itemize}
+		\item What's the goal? State your problem clear and succinct. 
+		\subitem This project will create artworks using the DNA sequence of a person as a seed. A generative adversarial network (GAN) will be trained on images of landscape paintings and be tuned to produce a customized artwork for each different DNA sequence. If successful, the algorithm will be deployed at the Iowa Neuroscience Institute to create souvenirs for research subjects.  
+		\item What are the independent variables (inputs) and dependent variables (outputs)? 
+		\subitem Input = DNA sequence of a research subject | Output = artwork
+
+	\end{itemize}
+
 	
 	
-	\section{Headings: first level}
+	\section{Related Works (Optional)}
 	\label{sec:headings}
 	
-	\lipsum[4] See Section \ref{sec:headings}.
+	\begin{itemize}
+		\item If you find it necessary to have a separate section to deep dive into other relevant works in literature, create a section titled "Related Work".
+		\item Try to categorize your/other people's previous works and build a *story*. Don't just list some facts. The worst thing to do is something like: "Smith et al. did this. Johnson et al. did that. Xu et al. did this. ..." ----a simple listing of papers. Instead, tell a story (like a fun history book).
+		\item For the scope of this project, it is not always necessary.
+		\item If you plan to transform this course project into a journal/conference submission, it should be helpful to have it written up.
+	\end{itemize}
 	
-	\subsection{Headings: second level}
-	\lipsum[5]
-	\begin{equation}
-	\xi _{ij}(t)=P(x_{t}=i,x_{t+1}=j|y,v,w;\theta)= {\frac {\alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}{\sum _{i=1}^{N} \sum _{j=1}^{N} \alpha _{i}(t)a^{w_t}_{ij}\beta _{j}(t+1)b^{v_{t+1}}_{j}(y_{t+1})}}
-	\end{equation}
+	See Section \ref{sec:headings}.
 	
-	\subsubsection{Headings: third level}
-	\lipsum[6]
 	
-	\paragraph{Paragraph}
-	\lipsum[7]
-	
-	\section{Examples of citations, figures, tables, references}
+	\section{Problem Definition}
 	\label{sec:others}
 	\lipsum[8] \cite{kour2014real,kour2014fast} and see \cite{hadash2018estimate}.
 	
@@ -143,6 +132,9 @@
 		\item consectetur adipiscing elit. 
 		\item Aliquam dignissim blandit est, in dictum tortor gravida eget. In ac rutrum magna.
 	\end{itemize}
+	
+	
+	\section{Data}
 	
 	
 	\bibliographystyle{unsrt}  
