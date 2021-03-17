@@ -1,0 +1,8 @@
+biopython
+numpy
+os
+pathlib
+tensorflow
+urllib.request
+google.colab 
+zipfile
