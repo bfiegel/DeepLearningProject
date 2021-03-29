@@ -18,18 +18,18 @@
 
 \author{
 	Kevin Steele \\
-	Department of Electrical Engineering \\
+	Department of Electrical and Computer Engineering \\
 	University of Iowa\\
 	\texttt{kevin-steele@uiowa.edu} \\
 	%% examples of more authors
 	\And
 	Brain Fiegel \\
-	Department of Industrial and Mechanical Engineering \\
+	Department of Industrial and Systems Engineering \\
 	University of Iowa\\
 	\texttt{brian-fiegel@uiowa.edu} \\
 	\And
 	Stjepan Fiolic \\
-	Department of Electrical Engineering \\
+	Department of Electrical and Computer Engineering \\
 	University of Iowa\\
 	\texttt{stjepan-fiolic@uiowa.edu} \\
 }
@@ -38,7 +38,6 @@
 	\maketitle
 	
 	\begin{abstract}
-		https://www.overleaf.com/latex/templates/style-and-template-for-preprints-arxiv-bio-arxiv/fxsnsrzpnvwc
 		The Iowa Neuroscience Institute has a desire for a landscape generation process by which DNA sequences are converted to landscape images. Our project is to train a Generative Adversarial Network (GAN) to accomplish this task.
 	\end{abstract}
 	
@@ -48,32 +47,28 @@
 	
 	
 	\section{Introduction}
-
+	\label{sec:intro}
 	
-	This project will create artworks using the DNA sequence of a person as a seed. A generative adversarial network (GAN) will be trained on images of landscape paintings and be tuned to produce a customized artwork for each different DNA sequence. If successful, the algorithm will be deployed at the Iowa Neuroscience Institute to create souvenirs for research subjects.
+	Generative Adversarial Networks (GANs) are an approach to generative modeling using deep learning methods. Generative models are an unsupervised machine learning task.  This task involves learning and discovering input data patterns in a way that the model can generate new output data that has a close relationship to the original input data. For example, if we were to feed the model with images of the human face, the model would generate a new human face that is not in the original dataset. This may be an example most people are familiar with, but models can also convert natural language text descriptions into images.  This type of model is called a Text-to-Image synthesis issue. We aim to achieve a similar goal by feeding a valid DNA sequence into our model and output a landscape image. 
 	
-	Testing
+	To understand GANs, the reader should first note that there are two sub-models of a GAN. The first is the generator model. The generator model takes a fixed-length random vector as input and generates a sample in that domain. A gaussian distribution is used to create a randomized vector. That vector then becomes the seed of the generative process. The training process will then produce latent (hidden) variables to input into the generator, the collection of which is referred to as a latent space. The second model of a GAN is the discriminator model. The discriminator model takes an example from the domain as input and predicts a binary class label.  This label is either authentic or generated. The authentic examples come from the training dataset, in our case images of landscapes. The generated examples come from the output of the generator model.  
 	
-	\section{Related Works (Optional)}
-	\label{sec:headings}
+	The best way to distinguish the two model types is to think about them as a tug of war. One model is trying to build a landscape image (generator) great enough to fool a human (discriminator) into thinking that it is a real landscape. The generator must make the landscapes as close to real landscapes while the human will point out flaws in the generated image and send it back.  
 	
-	\begin{itemize}
-		\item If you find it necessary to have a separate section to deep dive into other relevant works in literature, create a section titled "Related Work".
-		\item Try to categorize your/other people's previous works and build a *story*. Don't just list some facts. The worst thing to do is something like: "Smith et al. did this. Johnson et al. did that. Xu et al. did this. ..." ----a simple listing of papers. Instead, tell a story (like a fun history book).
-		\item For the scope of this project, it is not always necessary.
-		\item If you plan to transform this course project into a journal/conference submission, it should be helpful to have it written up.
-	\end{itemize}
+	There is a reward system in place between the generator fooling the discriminator and the discriminator.  This distinguishes the generated images from authentic images that come from the training set. If the generator is able to fool the discriminator, then the generator is rewarded by not having to rebuild its model.  In this case, the discriminator is punished by having to rebuild its model. Else-wise, if the discriminator correctly distinguishes a generated image, the generator is punished by having to rebuild its model.  The discriminator is rewarded by not having to rebuild its model. At convergence, the generator will have samples that are indistinguishable from the real data, or training set.  
 	
-	See Section \ref{sec:headings}.
+	Conditional augmentation of a GAN is an extension where both the generator and discriminator take-in additional conditioning variables, in our case DNA.  The generator forms images based on the additional conditioning variables and the discriminator verifies. First question should be how to convert a DNA element to a string that represents a feature in a landscape image. We plan on using an encoder to map DNA codons\footnote{sequence of three DNA nucleotides that corresponds with a specific amino acid or stop signal during protein synthesis.}  
+	
+	Given our particular object of Text-to-Image synthesis, we will require a specialized GAN architecture. A few architectures have been proposed in this realm, particularly StackGAN \cite{zhang2017stackgan} for text-to-image and CycleGAN \cite{CycleGAN2017} for unpaired image mapping. This involves using two generators, one mapping text to the generated image, then another doing the reverse with an image mapping to a generated text. A more recent attempt at this is MirrorGAN \cite{qiao2019mirrorgan}, which uses a stacked generator architecture to generate an image and an auto-encoder to regenerate semantically similar text. In examining the architectures, we decided to work with StackGAN. This architecture has two stages: stage-I GAN and stage-II GAN. Stage-I GAN does a rough estimation sketch of the text input provided. For a mountain landscape this would be the equivalent of having mountains distinguishable from sky but not being able to distinguish individual trees or different mountain faces. Stage-II uses the same text input that stage-I has and the low-resolution output image of stage-I as an input. This stage is where the details are included, like being able to distinguish mountain faces and trees.  
+	
+	Real world applications that we discussed include a provided digital image of a landscape generated based on the participant’s DNA. Although this might be a neat souvenir for the participant, some privacy concerns arise with participant DNA structure being transmitted over an unsecured connection. Also, the image would be a random conglomeration of DNA, but a clever enough person might be able to reconstruct participant data with the correct tools. 
 	
 	
 	\section{Problem Definition}
 	\label{sec:problemdef}
 	Our goal is to convert a valid DNA input sequence into a landscape image using a Generative Adversarial Network (GAN). Examples of these can be seen in the Data section \ref{sec:data}. This is a Text-to-Image synthesis issue, with the generator taking valid DNA codons (TCAG) as input and creating landscape 224 by 224 by 3 (RBG) images as output. Image values range within [0,255] across the 3 color channels. Similar to a more general Text-to-Image GAN, which would take text descriptions to generate images, the DNA codon sequence will be a translated language by which we generate landscapes. Valid DNA codons follow the standard generic code table with valid inputs of T, C, A, and G in groups of 3. Each sequence must also start with a start codon and end with an end codon. Noted in the original table, there are 25 different amino acids that these codons correspond to. While it is not currently our goal, this fact could be used similarly to an alphabet, and thusly a sentence or description of the image. 
 
-	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. In this case, we have a set of unmapped inputs to model, which will require a specialized GAN architecture. A few architectures have been proposed in this realm, particularly StackGAN \cite{zhang2017stackgan} for text-to-image and CycleGAN \cite{CycleGAN2017} for unpaired image mapping (though the principle works for text). This involves mapping encoded text to image feature maps generated by the generator, then do the reverse with an image encoder. A more recent attempt at this is MirrorGAN \cite{qiao2019mirrorgan}.  
-	
-	For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Thus, we convert the variable length string into a single floating-point feature. We also have plans to test using an Auto-Encoder to create this latent variable, as it works as a trainable solution. 
+	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Thus, we convert the variable length string into a single floating-point feature. We also have plans to test using an Auto-Encoder to create this latent variable, as it works as a trainable solution. 
 
 	
 	\section{Data}
