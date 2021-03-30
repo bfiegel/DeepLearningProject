@@ -1,8 +1,8 @@
 biopython
 numpy
-os
+#os
 pathlib
 tensorflow
-urllib.request
+#urllib.request
 google.colab 
-zipfile
+#zipfile
