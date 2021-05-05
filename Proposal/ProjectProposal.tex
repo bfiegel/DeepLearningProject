@@ -38,7 +38,8 @@
 	\maketitle
 	
 	\begin{abstract}
-		The Iowa Neuroscience Institute has a desire for a landscape generation process by which DNA sequences are converted to landscape images. Our project is to train a Generative Adversarial Network (GAN) to accomplish this task.
+		The Iowa Neuroscience Institute has a desire for a landscape generation process by which DNA sequences are converted to landscape images. Our project is to train a Generative Adversarial Network (GAN) to accomplish this task. Specifically, we sought out the generative power of StackGAN as inspiration for image generation, using the general architecture to build a multi-stage network of increasing image fidelity. However, given that our data does not follow the same word-sentence input structure of the original paper, we were unable to use the architecture to the full extent. Our results are well enough given the difficulty of the task, but a simpler model might suit better for this possess. There is also room to grow with information extraction from the input sequence.
+
 	\end{abstract}
 	
 	
@@ -68,7 +69,7 @@
 	\label{sec:problemdef}
 	Our goal is to convert a valid DNA input sequence into a landscape image using a Generative Adversarial Network (GAN). Examples of these can be seen in the Data section \ref{sec:data}. This is a Text-to-Image synthesis issue, with the generator taking valid DNA codons (TCAG) as input and creating landscape 224 by 224 by 3 (RBG) images as output. Image values range within [0,255] across the 3 color channels. Similar to a more general Text-to-Image GAN, which would take text descriptions to generate images, the DNA codon sequence will be a translated language by which we generate landscapes. Valid DNA codons follow the standard generic code table with valid inputs of T, C, A, and G in groups of 3. Each sequence must also start with a start codon and end with an end codon. Noted in the original table, there are 25 different amino acids that these codons correspond to. While it is not currently our goal, this fact could be used similarly to an alphabet, and thusly a sentence or description of the image.  
 
-	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Specifically, each character is represented by a number between 0 to 3 (ACGT respectively). These numbers are averaged by taking the sum of them and dividing by the length of the sequence and the length of a codon (3). This average is what we record, and thus we convert the variable length string into a single floating-point feature. This is done to create 128 latent variables, thus creating a 128-dimension latent space. Finally, the values are normalized to [0,1], finishing our noise generation. We also have plans to test using an Auto-Encoder to create this latent variable, as it works as a trainable solution to add on to our noise generation. As for the landscape images, all images vary in resolution, many of which are far too large to train on, and thus must be down-sampled into their 224 by 224 format. This is handled by keras preprocessing when loading the dataset into training and testing sets. 
+	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Specifically, each character is represented by a number between 0 to 3 (ACGT respectively). These numbers are averaged by taking the sum of them and dividing by the length of the sequence and the length of a codon (3). This average is what we record, and thus we convert the variable length string into a single floating-point feature. This is done to create 128 latent variables, thus creating a 128-dimension latent space. Finally, the values are normalized to [0,1], finishing our noise generation. We played around with using text embeddings using k-mer counting and Sequence Graph Transformation, but ended up leaving this out as it would not conform to the latent space defined. It is an area with room for exploration, however. As for the landscape images, all images vary in resolution, many of which are far too large to train on, and thus must be down-sampled into their 224 by 224 format. This is handled by keras preprocessing when loading the dataset into training and testing sets. 
 
 	
 	\section{Data}
@@ -105,6 +106,23 @@
 		\label{tab:dna}
 	\end{table}
 	
+	\section{Method}
+
+	\subsection{Equations}
+
+	\subsection{Design and Trianing}
+
+	\section{Results and Discussion}
+	
+
+	\subsection{Evaluation}	
+
+
+	\section{Conclusion}
+
+	    A short summary of the work. Keep it brief and concise, and straight to the point.
+
+
 	\bibliographystyle{unsrt}  
 	%\bibliography{references}  %%% Remove comment to use the external .bib file (using bibtex).
 	%%% and comment out the ``thebibliography'' section.
