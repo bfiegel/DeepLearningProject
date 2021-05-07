@@ -141,7 +141,7 @@
 	The stage 2 generator follows the output of the stage 1 generator, taking the 64x64x3 image as input. Since we desire a 224x224x3 output, the input image must be resized to 56x56x3 using lanczos resampling \cite{lanczos}. This is fed through 2 Up Sample block of kernel 4 with filter sizes of 112 and 224 respectively, and the generator finishes with a convolutional layer of 3 filters  and a tanh activation output. This provides a 224x224x3 image. The discriminator opens with convolutional layer of filter size 224, kernel 4, and stride 2, followed by a LeakyReLU layer. This is then fed through 3 Down Sample blocks of kernel 4 and filters 56, 112, and 224 respectively. Finally, a dense layer of output size 1 generates the discriminator’s prediction.
 
 	\subsection{Training}
-
+	Training was done using a batch size of 32 and a loss of Binary Cross Entropy. We train stage 1 using 136 epochs and stage 2 with 301 epochs. We use a normally distributed noise of shape 128 as input to the stage 1 GAN. The stage 2 GAN training uses the normally distributed noise to obtain an image from the stage 1 GAN (64x64x3 image vector), then inputs the image to the stage 2 GAN. Stage 2 does not take any separate noise input as the image created is assumed to maintain the randomness of the noise.  For both GANs, true labels are given a random uniform noise scaled by a factor of 0.2 in order to reduce the strength of the discriminator’s learning. This is done in the hopes of stabilizing the GAN’s loss convergence \cite{salimans2016improved}.
 	\section{Results and Discussion}
 	
 
