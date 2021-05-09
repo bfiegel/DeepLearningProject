@@ -110,6 +110,7 @@
 	Here we will discuss the methodology of employed on the project. All code was developed to be run on Google Colab using Jupyter Notebook formatting for Python. Code can be found at \url{https://github.com/KaiwenS7/DeepLearningProject}.
 
 	\subsection{Relevant Equations}
+	\label{sec:equations}
 	GANs optimize their networks around a minmax problem. The generator G is optimized to produce images that are difficult for the discriminator D to differentiate from real images. D is then optimized to know the difference between generated images and real images. This optimization comes by way of minmaxing the loss function.
 	%Binary Cross Entropy
 	For our loss function, we use the binary cross entropy between the predicted labels and the true labels for the discriminator D and between predicted labels and fake labels for the generator G. Cross Entropy can be defined as:
@@ -146,19 +147,47 @@
 	
 
 	\subsection{Evaluation}	
+	\begin{table}
+		\caption{Stage 2 FID for different Epochs}
+		\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Epochs     & FID \\
+			\hline
+			150	& 370 \\
+			165	& 410 \\
+			195	& 427 \\
+			200	& 407 \\
+			215	& 513 \\
+			260	& 510 \\
+			\hline
+		\end{tabular}
+		\label{tab:fid}
+	\end{table}
+	As described in section \ref{sec:equations}, we use the FID as a qualitative measure for our GAN network. Generated images are compared to the images used to train the network for similarly, quality, and diversity. We used this measurement on multiple stages of epochs to obtain a more comprehensive look at the model’s changes over time. These can be found in Table \ref{tab:fid} for stage 2, and their corresponding image output can be seen in Figure \ref{fig:stage2Images}. As can be seen from the table, the FID increases over time, meaning the images have been found to be further from the source materials over time. Specifically, we see an increase of 37.8\% over 110 epochs for stage 2. This means that there is some correlation with the loss, and that the generator is failing to improve over more epochs. Stage 1 was found to have it's best network at 100 epochs with an FID of 420, and it's images can be seen in Figure \ref{fig:stage1Images}.
+
+	Stage 1 tended to provide rather realistic images after about 100 epochs. However, we found that there appears to be less diversity and realism to the images as the model evolves. This tendency can be better observed in stage 2, though stage 2 produces less realistic images overall. This is likely due to mode collapse, as we have observed that the images tend to blur together at times. This could also be due to the variety of the image set, as there are several widely varying images without any labels attached. As such, the model could have difficulty learning the difference between, for instance, a forest and a desert when generating images.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.4]{images/StageI_epoch100_FID420.png}
+	\caption{Stage 1 epoch 100 images. Corresponding FID is 420.}
+	\label{fig:stage1Images}
+	\end{figure}
 
 
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{images/Stage2Images.png}
+	\caption{Stage 2 images organized by epoch. Top-left is the earliest images and bottom-right is the latest images}
+	\label{fig:stage2Images}
+	\end{figure}
 	\section{Conclusion}
 
 	    A short summary of the work. Keep it brief and concise, and straight to the point.
 
 
 	\bibliographystyle{unsrt}  
-	%\bibliography{references}  %%% Remove comment to use the external .bib file (using bibtex).
-	%%% and comment out the ``thebibliography'' section.
-	
-	
-	%%% Comment out this section when you \bibliography{references} is enabled.
 	\begin{thebibliography}{1}
 		\bibitem{zhang2017stackgan}
 		Han Zhang, Tao Xu, Hongsheng Li, Shaoting Zhang, Xiaogang Wang, Xiaolei Huang, and 
