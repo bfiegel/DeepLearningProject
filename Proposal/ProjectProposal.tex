@@ -38,7 +38,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		Generation of landscape images from an input of deoxyribonucleic acid (DNA) is an intriguing and challenging topic for deep learning. The idea that an individual’s DNA sequence would be able to produce an environmental landscape sounds impractical, but in this paper, we show working proof that it is possible. To achieve this feat, a generative adversarial network (GAN) and a GAN variation stack GAN was used to produce images of landscapes with just the input of DNA after the model was built. StackGAN has a stage-I and a stage-II. The success we recorded in the paper came from the stage-I with stage-II falling short of our desired target.  Our results are well enough given the difficulty of the task, but a simpler model might suit better for this possess. There is also room to grow with information extraction from the input sequence.
+		Generation of landscape images from an input of deoxyribonucleic acid (DNA) is an intriguing and challenging topic for deep learning. The idea that an individual’s DNA sequence would be able to produce an environmental landscape sounds impractical, but in this paper, we show working proof that it is possible. To achieve this feat, a generative adversarial network (GAN) and a GAN variation stack GAN was used to produce images of landscapes with just the input of DNA after the model was built. StackGAN has a stage-I and a stage-II. The success we recorded in the paper came from the stage-I with stage-II falling short of our desired target. 
 	\end{abstract}
 	
 	
@@ -171,12 +171,14 @@
 			\hline
 			Epochs     & FID \\
 			\hline
-			150	& 370 \\
-			165	& 410 \\
-			195	& 427 \\
-			200	& 407 \\
-			215	& 513 \\
-			260	& 510 \\
+			120	& 433 \\
+			140	& 423 \\
+			170	& 399 \\
+			200	& 403 \\
+			220	& 467 \\
+			240	& 400 \\
+			270	& 413 \\
+			300	& 420	\\
 			\hline
 		\end{tabular}
 		\label{tab:fid}
@@ -210,7 +212,7 @@
 
 	\section{Conclusion}
 
-	   A short summary of the work. Keep it brief and concise, and straight to the point.
+	 To summarize, we set out to generate landscape images from an input of DNA sequences. While we did not provide a perfect solution, we believe to have shown working proof that it is possible. To achieve this feat, a generative adversarial network (GAN) and a GAN variation stack GAN was used to produce images of landscapes with just the input of DNA after the model was built. StackGAN has a stage-I and a stage-II. Our results are well enough given the difficulty of the task, but a simpler model might suit better for this process. In the case that the StackGAN architecture were to be followed, there is room to grow with information extraction from the input sequence, such as k-mer counting and Sequence Graph Transformations.
 
 
 	\bibliographystyle{unsrt}  
