@@ -38,7 +38,7 @@
 	\maketitle
 	
 	\begin{abstract}
-		The Iowa Neuroscience Institute has a desire for a landscape generation process by which DNA sequences are converted to landscape images. Our project is to train a Generative Adversarial Network (GAN) to accomplish this task.
+		Generation of landscape images from an input of deoxyribonucleic acid (DNA) is an intriguing and challenging topic for deep learning. The idea that an individual’s DNA sequence would be able to produce an environmental landscape sounds impractical, but in this paper, we show working proof that it is possible. To achieve this feat, a generative adversarial network (GAN) and a GAN variation stack GAN was used to produce images of landscapes with just the input of DNA after the model was built. StackGAN has a stage-I and a stage-II. The success we recorded in the paper came from the stage-I with stage-II falling short of our desired target. 
 	\end{abstract}
 	
 	
@@ -50,25 +50,21 @@
 	\label{sec:intro}
 	
 	Generative Adversarial Networks (GANs) are an approach to generative modeling using deep learning methods. Generative models are an unsupervised machine learning task.  This task involves learning and discovering input data patterns in a way that the model can generate new output data that has a close relationship to the original input data. For example, if we were to feed the model with images of the human face, the model would generate a new human face that is not in the original dataset. This may be an example most people are familiar with, but models can also convert natural language text descriptions into images.  This type of model is called a Text-to-Image synthesis issue. We aim to achieve a similar goal by feeding a valid DNA sequence into our model and output a landscape image. 
-	
-	To understand GANs, the reader should first note that there are two sub-models of a GAN. The first is the generator model. The generator model takes a fixed-length random vector as input and generates a sample in that domain. A gaussian distribution is used to create a randomized vector. That vector then becomes the seed of the generative process. The training process will then produce latent (hidden) variables to input into the generator, the collection of which is referred to as a latent space. The second model of a GAN is the discriminator model. The discriminator model takes an example from the domain as input and predicts a binary class label.  This label is either authentic or generated. The authentic examples come from the training dataset, in our case images of landscapes. The generated examples come from the output of the generator model.  
-	
-	The best way to distinguish the two model types is to think about them as a tug of war. One model is trying to build a landscape image (generator) great enough to fool a human (discriminator) into thinking that it is a real landscape. The generator must make the landscapes as close to real landscapes while the human will point out flaws in the generated image and send it back.  
-	
-	There is a reward system in place between the generator fooling the discriminator and the discriminator.  This distinguishes the generated images from authentic images that come from the training set. If the generator is able to fool the discriminator, then the generator is rewarded by not having to rebuild its model.  In this case, the discriminator is punished by having to rebuild its model. Else-wise, if the discriminator correctly distinguishes a generated image, the generator is punished by having to rebuild its model.  The discriminator is rewarded by not having to rebuild its model. At convergence, the generator will have samples that are indistinguishable from the real data, or training set.  
-	
-	Conditional augmentation of a GAN is an extension where both the generator and discriminator take-in additional conditioning variables, in our case DNA.  The generator forms images based on the additional conditioning variables and the discriminator verifies. First question should be how to convert a DNA element to a string that represents a feature in a landscape image. We plan on using an encoder to map DNA codons.\footnote{sequence of three DNA nucleotides that corresponds with a specific amino acid or stop signal during protein synthesis.}  
-	
+
+	To understand GANs, the reader should first note that there are two sub-models of a GAN. The first is the generator model. The generator model takes a fixed-length random vector as input and generates a sample in that domain. A gaussian distribution is used to create a randomized vector. That vector then becomes the seed of the generative process. The training process will then produce latent (hidden) variables to input into the generator, the collection of which is referred to as a latent space. The second model of a GAN is the discriminator model. The discriminator model takes an example from the domain as input and predicts a binary class label. This label is either authentic or generated. The authentic examples come from the training dataset, in our case images of landscapes. The generated examples come from the output of the generator model.  
+
+	The best way to distinguish the two model types is to think about them as a tug of war. One model is trying to build a landscape image (generator) great enough to fool a human (discriminator) into thinking that it is a real landscape. The generator must make the landscapes as close to real landscapes while the discriminator will point out flaws in the generated image and send it back. At convergence, the generator will have samples that are indistinguishable from the real data, or training set.  
+
 	Given our particular object of Text-to-Image synthesis, we will require a specialized GAN architecture. A few architectures have been proposed in this realm, particularly StackGAN \cite{zhang2017stackgan} for text-to-image and CycleGAN \cite{CycleGAN2017} for unpaired image mapping. This process can be used for text-to-image as well \cite{BERT2020}, which involves using two generators, one mapping text to the generated image, then another doing the reverse with an image mapping to a generated text. A more recent attempt at this is MirrorGAN \cite{qiao2019mirrorgan}, which uses a stacked generator architecture to generate an image and an auto-encoder to regenerate semantically similar text. In examining the architectures, we decided to work with StackGAN. This architecture has two stages: stage-I GAN and stage-II GAN. Stage-I GAN does a rough estimation sketch of the text input provided. For a mountain landscape this would be the equivalent of having mountains distinguishable from sky but not being able to distinguish individual trees or different mountain faces. Stage-II uses the same text input that stage-I has and the low-resolution output image of stage-I as an input. This stage is where the details are included, like being able to distinguish mountain faces and trees.   
-	
-	Real world applications that we discussed include a provided digital image of a landscape generated based on the participant’s DNA. Although this might be a neat souvenir for the participant, some privacy concerns arise with participant DNA structure being transmitted over an unsecured connection. Also, the image would be a random conglomeration of DNA, but a clever enough person might be able to reconstruct participant data with the correct tools. 
-	
-	
+
+	Real world applications that we discussed include a provided digital image of a landscape generated based on the participant’s DNA. Although this might be a neat souvenir for the participant, some privacy concerns arise with participant DNA structure being transmitted over an unsecure connection. Also, the image would be a random conglomeration of DNA, but a clever enough person might be able to reconstruct participant data with the correct tools. 
+
+
 	\section{Problem Definition}
 	\label{sec:problemdef}
-	Our goal is to convert a valid DNA input sequence into a landscape image using a Generative Adversarial Network (GAN). Examples of these can be seen in the Data section \ref{sec:data}. This is a Text-to-Image synthesis issue, with the generator taking valid DNA codons (TCAG) as input and creating landscape 224 by 224 by 3 (RBG) images as output. Image values range within [0,255] across the 3 color channels. Similar to a more general Text-to-Image GAN, which would take text descriptions to generate images, the DNA codon sequence will be a translated language by which we generate landscapes. Valid DNA codons follow the standard generic code table with valid inputs of T, C, A, and G in groups of 3. Each sequence must also start with a start codon and end with an end codon. Noted in the original table, there are 25 different amino acids that these codons correspond to. While it is not currently our goal, this fact could be used similarly to an alphabet, and thusly a sentence or description of the image.  
+	Our goal is to convert a valid DNA input sequence into a landscape image using a Generative Adversarial Network (GAN). Examples of these can be seen in the Data section \ref{sec:data}. This is a Text-to-Image synthesis issue, with the generator taking valid DNA codons (TCAG) as input and creating landscape 224 by 224 by 3 (RGB) images as output. Image values range within [0,255] across the 3 color channels. Similar to a more general Text-to-Image GAN, which would take text descriptions to generate images, the DNA codon sequence will be a translated language by which we generate landscapes. Valid DNA codons follow the standard generic code table with valid inputs of T, C, A, and G in groups of 3. Each sequence must also start with a start codon and end with an end codon. Noted in the original table, there are 25 different amino acids that these codons correspond to. While it is not currently our goal, this fact could be used similarly to an alphabet, and thusly a sentence or description of the image.  
 
-	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Specifically, each character is represented by a number between 0 to 3 (ACGT respectively). These numbers are averaged by taking the sum of them and dividing by the length of the sequence and the length of a codon (3). This average is what we record, and thus we convert the variable length string into a single floating-point feature. This is done to create 128 latent variables, thus creating a 128-dimension latent space. Finally, the values are normalized to [0,1], finishing our noise generation. We also have plans to test using an Auto-Encoder to create this latent variable, as it works as a trainable solution to add on to our noise generation. As for the landscape images, all images vary in resolution, many of which are far too large to train on, and thus must be down-sampled into their 224 by 224 format. This is handled by keras preprocessing when loading the dataset into training and testing sets. 
+	Looking more comprehensively at the GAN, the generator takes as input valid codon, considered the latent space of the system, and outputs the image we desire. The discriminator would take as input an image, either directly from the dataset or from the generator, and return the probability that the image is real (direct input) or fake (generated input). It is obvious that, generally, DNA does not map to images in the real world. For our purposes, we currently create input to the generator, the latent variables, by converting the DNA sequence to a normalized average value between [0, 1]. Specifically, each character is represented by a number between 0 to 3 (ACGT respectively). These numbers are averaged by taking the sum of them and dividing by the length of the sequence and the length of a codon (3). This average is what we record, and thus we convert the variable length string into a single floating-point feature. This is done to create 128 latent variables, thus creating a 128-dimension latent space. Finally, the values are normalized to [0,1], finishing our noise generation. We played around with using text embeddings using k-mer counting \footnote{Method of counting substrings in DNA codons} and Sequence Graph Transformation \footnote{Sequence embedding function. Extracts the short- and long-term sequence features and embeds them in a finite-dimensional feature space. Reference: \url{}}, but ended up leaving this out as it would not conform to the latent space defined. It is an area with room for exploration, however. As for the landscape images, all images vary in resolution, many of which are far too large to train on, and thus must be down-sampled into their 224 by 224 format. This is handled by keras preprocessing when loading the dataset into training and testing sets. 
 
 	
 	\section{Data}
@@ -80,7 +76,7 @@
 	\end{center}
 
 	\subsection{Landscape Dataset}
-	The landscape dataset contains a variety of non-descriptive landscape images. There are no classifications or metadata for any image. All images start as JPEG images of varying sizes, but are pre-processed to be 224 by 224, as can be seen in Figure \ref{fig:landscapes}. The images used were scraped from Flickr images
+	The landscape dataset contains a variety of non-descriptive landscape images. There are no classifications or metadata for any image. All images start as JPEG images of varying sizes, but are pre-processed to be 224 by 224, as can be seen in Figure \ref{fig:landscapes}. The images used were scraped from Flickr images, which appears to present some issues of dirtied data. For instance, we found the data is skewed toward ocean and mountain images, and there also contains a few images of selfies and posters (images of images). This within itself would cause issues with training the data, as the dirty data could cause the model to learn unnecessary things. However, the dataset is viable in its current iteration and does create a valuable model.
 	
 	\begin{figure}[h]
 		\centering
@@ -105,12 +101,125 @@
 		\label{tab:dna}
 	\end{table}
 	
+	\section{Method}
+	Here we will discuss the methodology of employed on the project. All code was developed to be run on Google Colab using Jupyter Notebook formatting for Python. Code can be found at \url{https://github.com/KaiwenS7/DeepLearningProject}.
+
+	\subsection{Relevant Equations}
+	\label{sec:equations}
+	GANs optimize their networks around a minmax problem. The generator G is optimized to produce images that are difficult for the discriminator D to differentiate from real images. D is then optimized to know the difference between generated images and real images. This optimization comes by way of minmaxing the loss function.
+	%Binary Cross Entropy
+	For our loss function, we use the binary cross entropy between the predicted labels and the true labels for the discriminator D and between predicted labels and fake labels for the generator G. Cross Entropy can be defined as:
+	\begin{equation}
+		H(p,q) = -\Sigma_{i}p_{i} log q_{i} = -y log \hat{y} – (1-y) log (1-\hat{y})
+	\end{equation}
+	where $p \in {y, 1-y}$ or the true examples and $q \in {\hat{y} , 1-\hat{y}}$ or the generated examples.
+
+	%GAN optimization
+	We can convert the loss function into a minmax problem for G and D, where we maximize the loss of D while minimizing the loss on G. This dual-optimization can be summarized with the objective function:
+	\begin{equation}
+		\min_{G} \max_{D} V(D,G)= E _{x \sim p_{data}}[log D(x)] + E _{x \sim p_{z}}[log (1-D(G(z))]
+	\end{equation}
+	Where x an image from the real data $p_{data}$, and z is the noise from a Gaussian distribution $p_{z}$.
+	
+	%FID Evaluation
+	To evaluate images produced by our model, we use the Fréchet Inception Distance (FID). This, like Inception Score, is used to evaluate the quality and diversity of a GAN’s image production. FID in particular compares the distribution of generated images to the distribution of training or real images. This assumes that the two distributions are multidimensional Gaussians: $\mathcal{N}(\mu, \Sigma)$, the generated distribution and $\mathcal{N}(\mu_{\omega}, \Sigma_{\omega})$ the real distribution. Using these, we can describe FID as:
+	\begin{equation}
+		FID = |\mu-\mu_{\omega}|^{2} + tr(\Sigma + \Sigma_{\omega} - 2*(\Sigma\Sigma_{\omega})^{1/2})
+	\end{equation}
+
+	\subsection{Implementation}
+	We originally followed the StackGAN model as closely as was capable, implementing the neural networks of the stage-I GAN and the stage-II GAN without the conditional augmentation. In the original paper, conditional augmentation was used for word segmentation and sentence feature extraction, which is then fed into both stages. We do no such thing with DNA sequences. Both stages use an Adam optimizer with a Learning Rate of 0.0002 and a Beta of 0.5 for both the discriminator and the generator. We have also implemented a learning rate decay of 0.5 every 50 epochs.
+
+	In preparation for discussion of each stage, we will first define the blocks used to simplify explanation of the models. There are 2 repeating blocks used in building the GANs, the Up Sample block and Down Sample block. The Up Sample block involves an up sampling layer followed by a convolutional layer with a ReLU activation. The Down Sample block is a convolutional layer of at least stride 2, followed by a ReLU activation and a Dropout layer. Also as a note, all LeakyReLU activations use an alpha of 0.2, and all Dropout layers use a 0.2 dropout rate.
+
+	The stage-I generator takes an input with the latent space size of 128. This is fed into a dense layer and reshaped with the values (4, 4, 1024). This is fed through a series of 4 Up Sample blocks, each reducing the filter size by half. Finally we use a convolution layer with 3 filters and a tanh activation to obtain a 64x64x3 image. The discriminator follows a convolutional layer of 64 filters and a kernel of 4 using a LeakyReLU activation. Following this is 4 Down Sample blocks, each doubling the number of filters, and finally the discriminator ends with a dense layer of output size 1, the probability that the input sample is real.
+
+	The stage-II generator follows the output of the stage-I generator, taking the 64x64x3 image as input. Since we desire a 224x224x3 output, the input image must be resized to 56x56x3 using lanczos resampling \cite{lanczos}. This is fed through 2 Up Sample block of kernel 4 with filter sizes of 112 and 224 respectively, and the generator finishes with a convolutional layer of 3 filters  and a tanh activation output. This provides a 224x224x3 image. The discriminator opens with convolutional layer of filter size 224, kernel 4, and stride 2, followed by a LeakyReLU layer. This is then fed through 3 Down Sample blocks of kernel 4 and filters 56, 112, and 224 respectively. Finally, a dense layer of output size 1 generates the discriminator’s prediction.
+
+	\subsection{Training}
+	Training was done using a batch size of 32 and a loss of Binary Cross Entropy. We train stage-I using 100 epochs and stage-II with 300 epochs. We use a normally distributed noise of shape 128 as input to the stage-I GAN. The stage-II GAN training uses the normally distributed noise to obtain an image from the stage-I GAN (64x64x3 image vector), then inputs the image to the stage-II GAN. stage-II does not take any separate noise input as the image created is assumed to maintain the randomness of the noise.  For both GANs, true labels are given a random uniform noise scaled by a factor of 0.2 in order to reduce the strength of the discriminator’s learning. This is done in the hopes of stabilizing the GAN’s loss convergence \cite{salimans2016improved}.
+	\section{Results and Discussion}
+	Here we will discuss the results of our testing and potential changes that could be done to further improve the model in future.
+
+	\subsection{Evaluation}	
+	\label{sub:eval}
+	With our model, we saw similar trends with the loss of both stage-I and stage-II. As epochs increased, the loss for the discriminator exponentially decreased (see \ref{fig:discrLoss}), and the loss for the generator linearly increased (see \ref{fig:genLoss}). Since these losses never level off, we do not appear to reach equilibrium with the models. If only the losses were considered, then the generator is getting much worse at creating new images, and the discriminator is out-pacing the generator's learning. We can see this trend by viewing the images themselves in Figures \ref{fig:stage1Images} and \ref{fig:stage2Images}.
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.3]{images/discriminator_tensorboard.png}
+	\caption{Stage-I and stage-II discriminator loss as provided by TensorBoard. The sky-blue line is stage-I and the dark green line is stage-II}
+	\label{fig:discrLoss}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.3]{images/generator_tensorboard.png}
+	\caption{Stage-I and stage-II generator loss as provided by TensorBoard. The sky-blue line is stage-I and the dark green line is stage-II}
+	\label{fig:genLoss}
+	\end{figure}
+
+
+	\begin{table}
+		\caption{stage-II FID for different Epochs}
+		\centering
+		\begin{tabular}{|c|c|}
+			\hline
+			Epochs     & FID \\
+			\hline
+			120	& 433 \\
+			140	& 423 \\
+			170	& 399 \\
+			180	& 438 \\
+			190	& 430 \\
+			200	& 403 \\
+			210	& 429 \\
+			220	& 467 \\
+			230	& 430 \\
+			240	& 400 \\
+			250	& 414 \\
+			260	& 431 \\
+			270	& 413 \\
+			280	& 445 \\
+			290	& 406 \\
+			300	& 420	\\
+			\hline
+		\end{tabular}
+		\label{tab:fid}
+	\end{table}
+
+	As described in section \ref{sec:equations}, we use the FID as a qualitative measure for our GAN network. Generated images are compared to the images used to train the network for similarly, quality, and diversity. We used this measurement on multiple stages of epochs to obtain a more comprehensive look at the model’s changes over time. These can be found in Table \ref{tab:fid} for stage-II, and their corresponding image output can be seen in Figure \ref{fig:stage2Images}. As can be seen from the table, the FID barely changes over time, meaning the images have been found to be the same quality and diversity from the source materials over all epochs above 120. This means that there is little correlation with the loss, and that the generator is failing to change over more epochs. Stage-I was found to have it's best network at 100 epochs with an FID of 420, and it's images can be seen in Figure \ref{fig:stage1Images}.
+
+	Stage-I tended to provide rather realistic images after about 100 epochs. However, we found that there appears to be less diversity and realism to the images as the model evolves. This tendency can be better observed in stage-II, though stage-II produces less realistic images overall. However, stage-II does show promise in that it is a relatively strong translation of the input image from stage-I. The issue lies with the colors creating less realistic images in general. It's difficult to say why the this is the case, but we can say that the generators are learning. Perhaps more model exploration might be required, but otherwise it is difficult to discern why the images cannot improve past around 300 epochs.
+	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.4]{images/StageI_epoch100_FID420.png}
+	\caption{stage-I epoch 100 images. Corresponding FID is 420.}
+	\label{fig:stage1Images}
+	\end{figure}
+
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=1]{images/StageIandII.png}
+	\caption{Stage-I and stage-II images organized by epoch. Top half of each image is the generated stage-I image (all done at epoch 100 for stage-I). The bottom half is the result of the top half image as input.}
+	\label{fig:stage2Images}
+	\end{figure}
+
+	\subsection{Discussion}	
+
+	To explain the issues further, there are too many different landscapes ranging from mountains, deserts, oceans, fields and many other filler landscapes. As you can see in Figure  \ref{fig:stage2Images} and Figure \ref{fig:stage1Images}. The images have many different landscapes mixed in with the output images. Some landscape types are favored more than others, for example, there are more images of ocean/coast and fewer images of desert. Along with too many differing landscapes, our data set also consists of images with people, animals, non-environmental objects, and modern infrastructure. There was discussion about filtering the different types of images ourselves because the landscape data set that was used for training had no filter by type of images or classification of the images. There is a belief that if we classify only images of a particular feature set, like mountains, then the resulting images would have turned out environmentally natural. It would be a suggested course of action to change this dataset in future projects of the like.
+
+	We also do not have the fullest grasp of the loss. As mentioned in \ref{sub:eval}, the losses tend in opposite directions and never reach an equilibrium point. Given this, we would expect that the generated images get worse over time, which is an assessment we agree with. As time goes on, particularly for stage-II, the images become noticably discolored and less varied. To the human eye test, stage-II fails to learn and capture the features of a landscape image, even though the FID suggests the similarity of the images.
+
+
+	\section{Conclusion}
+
+	 To summarize, we set out to generate landscape images from an input of DNA sequences. While we did not provide a perfect solution, we believe to have shown working proof that it is possible. To achieve this feat, a generative adversarial network (GAN) and a GAN variation stack GAN was used to produce images of landscapes with just the input of DNA after the model was built. StackGAN has a stage-I and a stage-II. Our results are well enough given the difficulty of the task, but a simpler model might suit better for this process. In the case that the StackGAN architecture were to be followed, there is room to grow with information extraction from the input sequence, such as k-mer counting and Sequence Graph Transformations.
+
+
 	\bibliographystyle{unsrt}  
-	%\bibliography{references}  %%% Remove comment to use the external .bib file (using bibtex).
-	%%% and comment out the ``thebibliography'' section.
-	
-	
-	%%% Comment out this section when you \bibliography{references} is enabled.
 	\begin{thebibliography}{1}
 		\bibitem{zhang2017stackgan}
 		Han Zhang, Tao Xu, Hongsheng Li, Shaoting Zhang, Xiaogang Wang, Xiaolei Huang, and 
@@ -134,8 +243,119 @@
 		Tingting Qiao and Jing Zhang and Duanqing Xu and Dacheng Tao.
 		\newblock MirrorGAN: Learning Text-to-image Generation by Redescription
 		\newblock {\em arXiv preprint arXiv:1903.05854}, 2019.
+
+		\bibitem{lanczos}
+		Lanczos Resampling.
+		\newblock In {\em Wikipedia.} \url{https://en.wikipedia.org/wiki/Lanczos_resampling}
 		
+		\bibitem{salimans2016improved}
+		Tim Salimans, Ian Goodfellow, Wojciech Zaremba, Vicki Cheung, Alec Radford and Xi Chen
+		\newblock Improved Techniques for Training GANs
+		\newblock {\em arXiv preprint arXiv:1606.03498}, 2016.
+
 	\end{thebibliography}
 	
 	
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch120_FID433.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 120}
+	\end{figure}
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch130_FID410.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 130}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch140_FID423.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 140}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch170_FID399.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 170}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch180_FID438.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 180}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch190_FID430.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 190}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch200_FID403.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 200}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch210_FID429.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 210}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch220_FID467.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 220}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch230_FID430.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 230}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch240_FID400.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 240}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch250_FID414.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 250}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch260_FID431.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 260}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch270_FID413.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 270}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch280_FID445.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 280}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch290_FID406.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 290}
+	\end{figure}
+
+	\begin{figure}[h]
+	\centering
+	\includegraphics[scale=0.6]{images/epoch300_FID420.png}
+	\caption{Stage-I and stage-II images for stage-II epoch 300}
+	\end{figure}
+
+
 \end{document}
